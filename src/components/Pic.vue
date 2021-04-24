@@ -4,8 +4,13 @@
       <img
         :src="pic.picAddress || `${serverBaseUrl}/pics/${pic.picFileName}`"
         alt="Picture Missing"
+        :title="picDetailsDisplay"
       />
-      <div class="layer"></div>
+      <div
+        class="layer"
+        :title="picDetailsDisplay"
+        @mouseenter="getPicDetails(pic.id)"
+      ></div>
     </div>
     <div class="pic-text">
       <h4>{{ pic.picName }}</h4>
@@ -21,18 +26,32 @@
 import { serverBaseUrl } from "@/services/pics.service";
 
 export default {
+  name: "Pic",
   props: {
     pic: {
       type: Object,
       required: true,
     },
   },
+  computed: {
+    picDetailsDisplay() {
+      return this.picDetails || "Loading...";
+    },
+  },
   data() {
     return {
       serverBaseUrl,
+      picDetails: null,
     };
   },
-  name: "Pic",
+  methods: {
+    async getPicDetails() {
+      const details = await this.$store.dispatch("picDetails", this.pic.id);
+      if (details) {
+        this.picDetails = `Resolution: ${details.resolution}, Weight: ${details.imgWeight}`;
+      }
+    },
+  },
 };
 </script>
 

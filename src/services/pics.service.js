@@ -9,3 +9,10 @@ export const fetchPictures = async () => {
     .data;
   return pics;
 };
+
+export const fetchPicDetails = async (picId) => {
+  const pic = (
+    await axios.get(`${serverBaseUrl}/${apiBaseUrl}/pics/${picId}/details`)
+  ).data.data;
+  return pic;
+};
