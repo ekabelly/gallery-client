@@ -1,8 +1,11 @@
 <template>
   <div class="gallery">
     <h2>Gallery</h2>
-    <searchbar />
+    <searchbar @search="setPics($event)" />
     <div class="loader" v-if="!pics">loading...</div>
+    <div class="pics-container" v-if="pics && pics.length < 1">
+      No Pictures Found
+    </div>
     <div class="pics-container" v-if="pics">
       <Pic :pic="pic" v-for="pic in pics" :key="pic.id" />
     </div>
@@ -23,11 +26,12 @@ export default {
     };
   },
   mounted() {
-    this.setComponentData();
+    this.setPics();
   },
   methods: {
-    async setComponentData() {
-      this.pics = await fetchPictures();
+    async setPics(searchTerm) {
+      this.pics = null;
+      this.pics = await fetchPictures(searchTerm);
     },
   },
 };

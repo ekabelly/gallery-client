@@ -1,18 +1,38 @@
-const { default: axios } = require("axios");
+import axios from "axios";
+import appConfig from "../config/config.json";
 
-export const serverBaseUrl = "http://localhost:4000";
+const createQuery = (searchTerm) => {
+  if (searchTerm) {
+    return `?artist=${searchTerm}&picName=${searchTerm}`;
+  }
+  return "";
+};
 
-const apiBaseUrl = "api/v1";
-
-export const fetchPictures = async () => {
-  const pics = (await axios.get(`${serverBaseUrl}/${apiBaseUrl}/pics`)).data
-    .data;
+export const fetchPictures = async (searchTerm) => {
+  const pics = (
+    await axios.get(
+      `${appConfig.serverBaseUrl}/${appConfig.apiBaseUrl}/pics${createQuery(
+        searchTerm
+      )}`
+    )
+  ).data.data;
   return pics;
 };
 
 export const fetchPicDetails = async (picId) => {
   const pic = (
-    await axios.get(`${serverBaseUrl}/${apiBaseUrl}/pics/${picId}/details`)
+    await axios.get(
+      `${appConfig.serverBaseUrl}/${appConfig.apiBaseUrl}/pics/${picId}/details`
+    )
+  ).data.data;
+  return pic;
+};
+
+export const fetchPic = async (picId) => {
+  const pic = (
+    await axios.get(
+      `${appConfig.serverBaseUrl}/${appConfig.apiBaseUrl}/pics/${picId}`
+    )
   ).data.data;
   return pic;
 };

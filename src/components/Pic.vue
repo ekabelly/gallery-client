@@ -1,54 +1,86 @@
 <template>
   <div class="pic">
-    <div class="pic-wrapper">
-      <img
-        :src="pic.picAddress || `${serverBaseUrl}/pics/${pic.picFileName}`"
-        alt="Picture Missing"
-        :title="picDetailsDisplay"
-      />
-      <div
-        class="layer"
-        :title="picDetailsDisplay"
-        @mouseenter="getPicDetails(pic.id)"
-      ></div>
-    </div>
-    <div class="pic-text">
-      <h4>{{ pic.picName }}</h4>
-      <h6>{{ pic.artist }}</h6>
-      <div class="pic-desc" :title="pic.description">
-        {{ pic.description }}
+    <div v-if="picData">
+      <div class="pic-wrapper">
+        <img
+          :src="
+            picData.picAddress || `${serverBaseUrl}/pics/${picData.picFileName}`
+          "
+          alt="Picture Missing"
+          :title="picDetailsDisplay"
+        />
+        <div
+          class="layer"
+          :title="picDetailsDisplay"
+          @mouseenter="getPicDetails(picData.id)"
+          @click="navigateToPicChat()"
+        ></div>
+      </div>
+      <div class="pic-text">
+        <h4>{{ picData.picName }}</h4>
+        <h6>{{ picData.artist }}</h6>
+        <div class="pic-desc" :title="picData.description">
+          {{ picData.description }}
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { serverBaseUrl } from "@/services/pics.service";
+import { fetchPic } from "@/services/pics.service";
+import { serverBaseUrl } from "../config/config.json";
 
 export default {
   name: "Pic",
   props: {
     pic: {
       type: Object,
-      required: true,
+      default: null,
+    },
+    picId: {
+      type: String,
+      default: null,
     },
   },
   computed: {
     picDetailsDisplay() {
       return this.picDetails || "Loading...";
     },
+    picData() {
+      return this.pic || this.fetchedPic;
+    },
+  },
+  mounted() {
+    this.setComponentData();
   },
   data() {
     return {
       serverBaseUrl,
       picDetails: null,
+      fetchedPic: null,
     };
   },
   methods: {
+    async setComponentData() {
+      if (!this.pic) {
+        this.fetchedPic = await fetchPic(this.picId);
+      }
+    },
     async getPicDetails() {
-      const details = await this.$store.dispatch("picDetails", this.pic.id);
-      if (details) {
-        this.picDetails = `Resolution: ${details.resolution}, Weight: ${details.imgWeight}`;
+      if (this.picData) {
+        const details = await this.$store.dispatch(
+          "picDetails",
+          this.picData.id
+        );
+        if (details) {
+          this.picDetails = `Resolution: ${details.resolution}, Weight: ${details.picWeight}`;
+        }
+      }
+    },
+    navigateToPicChat() {
+      if (this.$route.name === "Gallery") {
+        this.$router.push(`/pic-chat/${this.picData.id}`);
       }
     },
   },
@@ -57,25 +89,12 @@ export default {
 
 <style lang="scss" scoped>
 .pic {
-  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-
   .pic-text {
     padding: 10px;
     min-height: 100px;
 
     .pic-desc {
       font-size: 14px;
-    }
-
-    h4,
-    h6 {
-      margin: 0;
-    }
-
-    h6 {
-      font-size: 11px;
-      font-weight: normal;
-      margin-bottom: 10px;
     }
   }
 

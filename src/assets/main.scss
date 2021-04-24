@@ -3,3 +3,37 @@
 * {
     font-family: 'Roboto', sans-serif;
 }
+
+.pic, .chat {
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    border-radius: 10px;
+}
+
+h4,
+h6 {
+  margin: 0;
+}
+
+h6 {
+  font-size: 11px;
+  font-weight: normal;
+  margin-bottom: 10px;
+}
+
+input {
+    width: 90%;
+    padding: 5px 10px;
+  }
+
+  button {
+    background-color: transparent;
+    margin-left: 10px;
+    cursor: pointer;
+  }
+
+  input,
+  button {
+    border: 1px solid black;
+    border-radius: 7px;
+    outline: none;
+  }
